@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react"
 import TodoInput from "./components/TodoInput"
 import TodoList from "./components/TodoList"
+import Alert from './components/Alert'
+
 
 function App() {
   const [todos, setTodos] = useState([])
   const [todoValue, setTodoValue] = useState('')
+  const [alert, setAlert] = useState({ type: '', message: '', visible: false });
 
   function persistData(newList) {
     localStorage.setItem('todos', JSON.stringify({ todos: newList }))
@@ -14,6 +17,11 @@ function App() {
     const newTodoList = [...todos, newTodo]
     persistData(newTodoList)
     setTodos(newTodoList)
+    setAlert({
+      type: 'success',
+      message: 'Todo added successfully!',
+      visible: true,
+    });
   }
 
   function handleDeleteTodo(index) {
@@ -22,14 +30,26 @@ function App() {
     })
     persistData(newTodoList)
     setTodos(newTodoList)
+    setAlert({
+      type: 'danger',
+      message: 'Todo deleted successfully!',
+      visible: true,
+    });
   }
 
   function handleEditTodo(index) {
     const valueToBeEdited = todos[index]
     setTodoValue(valueToBeEdited)
     handleDeleteTodo(index)
+    setAlert({
+      type: 'info',
+      message: 'Todo is ready to edit!',
+      visible: true,
+    });
   }
-
+  function closeAlert() {
+    setAlert((prev) => ({ ...prev, visible: false }));
+  }
   useEffect(() => {
     if (!localStorage) {
       return
@@ -48,6 +68,13 @@ function App() {
 
   return (
     <>
+     {alert.visible && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={closeAlert}
+        />
+      )}
       <TodoInput todoValue={todoValue} setTodoValue={setTodoValue} handleAddTodos={handleAddTodos} />
       <TodoList handleEditTodo={handleEditTodo} handleDeleteTodo={handleDeleteTodo} todos={todos} />
     </>
