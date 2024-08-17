@@ -14,14 +14,14 @@ function App() {
   }
   useEffect(() => {
     async function fetchTodos() {
-      const response = await axios.get('http://localhost:5000/api/todos');
+      const response = await axios.get('http://localhost:5000/api/tasks/todos');
       setTodos(response.data.todos);
     }
     fetchTodos();
   }, []);
 
    async function handleAddTodos(newTodo) {
-    const response = await axios.post('http://localhost:5000/api/todos', { newTodo });
+    const response = await axios.post('http://localhost:5000/api/tasks/todos', { newTodo });
     const newTodoList = [...todos, newTodo]
     persistData(newTodoList)
     setTodos(newTodoList)
