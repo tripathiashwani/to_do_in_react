@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import TodoInput from "./components/TodoInput"
 import TodoList from "./components/TodoList"
 import Alert from './components/Alert'
-
+import axios from 'axios';
 
 function App() {
   const [todos, setTodos] = useState([])
@@ -12,8 +12,16 @@ function App() {
   function persistData(newList) {
     localStorage.setItem('todos', JSON.stringify({ todos: newList }))
   }
+  useEffect(() => {
+    async function fetchTodos() {
+      const response = await axios.get('http://localhost:5000/api/todos');
+      setTodos(response.data.todos);
+    }
+    fetchTodos();
+  }, []);
 
-  function handleAddTodos(newTodo) {
+   async function handleAddTodos(newTodo) {
+    const response = await axios.post('http://localhost:5000/api/todos', { newTodo });
     const newTodoList = [...todos, newTodo]
     persistData(newTodoList)
     setTodos(newTodoList)
